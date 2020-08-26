@@ -1,1 +1,100 @@
-<b>This is a fucking page</b>
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Tronweb Tronlink</title>
+
+</head>
+
+<body>
+
+<p>Tronweb Tronlink</p>
+<script src="TronWeb.js"></script>
+<script>
+
+/////////////////////////////////////////////
+
+var waitForGlobal = async () =>{
+
+ 
+    if (window.tronWeb) {
+        
+ 
+        let tronWeb = window.tronWeb;
+ 
+        // 2. check node connection，检查所需要的API是否都可以连通
+ 
+        const nodes = await tronWeb.isConnected();
+ 
+        const connected = !Object.entries(nodes).map(([name, connected]) => {
+ 
+            if (!connected) {
+ 
+                console.error(`Error: ${name} is not connected`);
+ 
+            }
+ 
+            return connected;
+ 
+        }).includes(false);
+ 
+        if (connected){
+ 
+ 
+            alert("all great!");
+            ////////////////////////////
+            var balance = await tronWeb.trx.getBalance('TPptmBH5jcVd8BeaR5w29xQ4XFW9yduWS5');
+            alert(balance);
+            
+            var tx=await tronWeb.transactionBuilder.sendTrx(
+                "TWhoiCS6K6CSTSQrWrhotJKGWmebwuXVWF", 
+                1000000, 
+                "TPptmBH5jcVd8BeaR5w29xQ4XFW9yduWS5"
+            );
+
+            var signedTx = await tronWeb.trx.sign(tx);
+            var broastTx = await tronWeb.trx.sendRawTransaction(signedTx);
+            console.log(broastTx);
+            
+ 
+        } else {
+ 
+            console.error(`Error: TRON node is not connected`);
+ 
+            console.error('wait for tronLink');
+            
+            //alert('TRON node is not connected');
+ 
+            setTimeout(async () => {
+ 
+                await waitForGlobal();
+ 
+            }, 100);
+ 
+        }
+ 
+ 
+ 
+    } else {
+ 
+        // 如果检测到没有注入tronWeb对象，则等待100ms后重新检测
+ 
+        console.error('wait for tronLink');
+        //alert("wait for tronLink");
+ 
+        setTimeout(async () => {
+ 
+            await waitForGlobal();
+ 
+        }, 100);
+ 
+    }
+ 
+};
+
+waitForGlobal();
+</script>
+</body>
+
+</html>
